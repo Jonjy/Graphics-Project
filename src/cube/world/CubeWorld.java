@@ -75,6 +75,12 @@ public class CubeWorld {
         GLU.gluPerspective(100.0f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+        glEnable(GL_TEXTURE_2D);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glEnable(GL_DEPTH_TEST);
+
     }
 
     /**
@@ -83,10 +89,7 @@ public class CubeWorld {
      */
     private void render(){  
         try {
-            Cube colors = new Cube();
-            colors.draw();
-            //We thought it looked better without the edges traced
-            //colors.traceEdge();
+            
             
         } catch (Exception e) {
         }
@@ -160,7 +163,8 @@ public class CubeWorld {
             camera.lookThrough();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             //you would draw your scene here.
-            render();
+            Chunk assHatt = new Chunk(0,0,0);
+            assHatt.render();
             //draw the buffer to the screen
             Display.update();
             Display.sync(60);
