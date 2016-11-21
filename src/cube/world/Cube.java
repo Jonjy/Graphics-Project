@@ -18,6 +18,7 @@ import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glNormal3f;
 import static org.lwjgl.opengl.GL11.glVertex3f;
 
 public class Cube {
@@ -82,36 +83,42 @@ public class Cube {
         glBegin(GL_QUADS);
 
         //Top
+        
         glColor3f(0.0f, 0.0f, 1.0f);
         glVertex3f(1.0f, 1.0f, -1.0f);
         glVertex3f(-1.0f, 1.0f, -1.0f);
         glVertex3f(-1.0f, 1.0f, 1.0f);
         glVertex3f(1.0f, 1.0f, 1.0f);
         //Bottom
+        
         glColor3f(1.0f, 1.0f, 0.0f);
         glVertex3f(1.0f, -1.0f, 1.0f);
         glVertex3f(-1.0f, -1.0f, 1.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
         glVertex3f(1.0f, -1.0f, -1.0f);
         //Front
+        
         glColor3f(0.0f, 1.0f, 0.0f);
         glVertex3f(1.0f, 1.0f, 1.0f);
         glVertex3f(-1.0f, 1.0f, 1.0f);
         glVertex3f(-1.0f, -1.0f, 1.0f);
         glVertex3f(1.0f, -1.0f, 1.0f);
         //Back
+        
         glColor3f(1.0f, 0.0f, 1.0f);
         glVertex3f(1.0f, -1.0f, -1.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
         glVertex3f(-1.0f, 1.0f, -1.0f);
         glVertex3f(1.0f, 1.0f, -1.0f);
         //left
+       
         glColor3f(1.0f, 0.0f, 0.0f);
         glVertex3f(-1.0f, 1.0f, 1.0f);
         glVertex3f(-1.0f, 1.0f, -1.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
         glVertex3f(-1.0f, -1.0f, 1.0f);
         //Right
+        
         glColor3f(0.0f, 1.0f, 1.0f);
         glVertex3f(1.0f, 1.0f, -1.0f);
         glVertex3f(1.0f, 1.0f, 1.0f);
@@ -128,36 +135,42 @@ public class Cube {
 
         //Top
         glColor3f(0.0f, 0.0f, 1.0f);
+        glNormal3f(0.0f,  1.0f,0.0f);
         glVertex3f(x+1.0f, y+1.0f, z-1.0f);
         glVertex3f(x-1.0f, y+1.0f, z-1.0f);
         glVertex3f(x-1.0f, y+1.0f, z+1.0f);
         glVertex3f(x+1.0f, y+1.0f, z+1.0f);
         //Bottom
         glColor3f(1.0f, 1.0f, 0.0f);
+        glNormal3f(0.0f,-1.0f,0.0f);
         glVertex3f(x+1.0f, y-1.0f, z+1.0f);
         glVertex3f(x-1.0f, y-1.0f, z+1.0f);
         glVertex3f(x-1.0f, y-1.0f, z-1.0f);
         glVertex3f(x+1.0f, y-1.0f, z-1.0f);
         //Front
         glColor3f(0.0f, 1.0f, 0.0f);
+        glNormal3f(0.0f,0.0f,1.0f);
         glVertex3f(x+1.0f, y+1.0f, z+1.0f);
         glVertex3f(x-1.0f, y+1.0f, z+1.0f);
         glVertex3f(x-1.0f, y-1.0f, z+1.0f);
         glVertex3f(x+1.0f, y-1.0f, z+1.0f);
         //Back
         glColor3f(1.0f, 0.0f, 1.0f);
+        glNormal3f(0.0f,0.0f,-1.0f);
         glVertex3f(x+1.0f, y-1.0f, z-1.0f);
         glVertex3f(x-1.0f, y-1.0f, z-1.0f);
         glVertex3f(x-1.0f, y+1.0f, z-1.0f);
         glVertex3f(x+1.0f, y+1.0f, z-1.0f);
         //left
         glColor3f(1.0f, 0.0f, 0.0f);
+        glNormal3f(-1.0f,0.0f,0.0f);
         glVertex3f(x-1.0f, y+1.0f, z+1.0f);
         glVertex3f(x-1.0f, y+1.0f, z-1.0f);
         glVertex3f(x-1.0f, y-1.0f, z-1.0f);
         glVertex3f(x-1.0f, y-1.0f, z+1.0f);
         //Right
         glColor3f(0.0f, 1.0f, 1.0f);
+        glNormal3f(1.0f,0.0f,0.0f);
         glVertex3f(x+1.0f, y+1.0f, z-1.0f);
         glVertex3f(x+1.0f, y+1.0f, z+1.0f);
         glVertex3f(x+1.0f, y-1.0f, z+1.0f);
