@@ -135,7 +135,7 @@ public class Cube {
 
         //Top
         glColor3f(0.0f, 0.0f, 1.0f);
-        glNormal3f(0.0f,  1.0f,0.0f);
+        glNormal3f(0.0f, -1.0f,0.0f);
         glVertex3f(x+1.0f, y+1.0f, z-1.0f);
         glVertex3f(x-1.0f, y+1.0f, z-1.0f);
         glVertex3f(x-1.0f, y+1.0f, z+1.0f);
@@ -182,6 +182,7 @@ public class Cube {
     public void traceEdge(){
         glBegin(GL_LINE_LOOP);
         //left
+        glNormal3f(-1.0f,0.0f,0.0f);
         glVertex3f(-1.0f, 1.0f, 1.0f);
         glVertex3f(-1.0f, 1.0f, -1.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -190,6 +191,7 @@ public class Cube {
         glEnd();
         glBegin(GL_LINE_LOOP);
         //Right
+        glNormal3f(1.0f,0.0f,0.0f);
         glVertex3f(1.0f, 1.0f, -1.0f);
         glVertex3f(1.0f, 1.0f, 1.0f);
         glVertex3f(1.0f, -1.0f, 1.0f);
@@ -198,6 +200,7 @@ public class Cube {
         glEnd();
         glBegin(GL_LINE_LOOP);
         //Top
+        glNormal3f(0.0f,1.0f,0.0f);
         glColor3f(0.0f, 0.0f, 0.0f);
         glVertex3f(1.0f, 1.0f, -1.0f);
         glVertex3f(-1.0f, 1.0f, -1.0f);
@@ -207,6 +210,7 @@ public class Cube {
         glEnd();
         glBegin(GL_LINE_LOOP);
         //bottom
+        glNormal3f(0.0f,-1.0f,0.0f);
         glVertex3f(1.0f, -1.0f, 1.0f);
         glVertex3f(-1.0f, -1.0f, 1.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
@@ -215,6 +219,7 @@ public class Cube {
         glEnd();
         glBegin(GL_LINE_LOOP);
         //Front
+        glNormal3f(0.0f,0.0f,1.0f);
         glVertex3f(1.0f, 1.0f, 1.0f);
         glVertex3f(-1.0f, 1.0f, 1.0f);
         glVertex3f(-1.0f, -1.0f, 1.0f);
@@ -223,6 +228,7 @@ public class Cube {
         glEnd();
         glBegin(GL_LINE_LOOP);
         //Back
+        glNormal3f(0.0f,0.0f,-1.0f);
         glVertex3f(1.0f, -1.0f, -1.0f);
         glVertex3f(-1.0f, -1.0f, -1.0f);
         glVertex3f(-1.0f, 1.0f, -1.0f);
@@ -235,6 +241,7 @@ public class Cube {
         glBegin(GL_LINE_LOOP);
         //left
         glColor3f(0.0f, 0.0f, 0.0f);
+        glNormal3f(-1.0f,0.0f,0.0f);
         glVertex3f(x-1.0f, y+1.0f, z+1.0f);
         glVertex3f(x-1.0f, y+1.0f, z-1.0f);
         glVertex3f(x-1.0f, y-1.0f, z-1.0f);
@@ -244,6 +251,7 @@ public class Cube {
         glBegin(GL_LINE_LOOP);
         //Right
         glColor3f(0.0f, 0.0f, 0.0f);
+        glNormal3f(1.0f,0.0f,0.0f);
         glVertex3f(x+1.0f, y+1.0f, z-1.0f);
         glVertex3f(x+1.0f, y+1.0f, z+1.0f);
         glVertex3f(x+1.0f, y-1.0f, z+1.0f);
@@ -253,6 +261,7 @@ public class Cube {
         glBegin(GL_LINE_LOOP);
         //Top
         glColor3f(0.0f, 0.0f, 0.0f);
+        glNormal3f(0.0f,1.0f,0.0f);
         glVertex3f(x+1.0f, y+1.0f, z-1.0f);
         glVertex3f(x-1.0f, y+1.0f, z-1.0f);
         glVertex3f(x-1.0f, y+1.0f, z+1.0f);
@@ -262,6 +271,7 @@ public class Cube {
         glBegin(GL_LINE_LOOP);
         //bottom
         glColor3f(0.0f, 0.0f, 0.0f);
+        glNormal3f(0.0f,-1.0f,0.0f);
         glVertex3f(x+1.0f, y+-1.0f, z+1.0f);
         glVertex3f(x-1.0f, y-1.0f, z+1.0f);
         glVertex3f(x-1.0f, y-1.0f, z-1.0f);
@@ -271,6 +281,7 @@ public class Cube {
         glBegin(GL_LINE_LOOP);
         //Front
         glColor3f(0.0f, 0.0f, 0.0f);
+        glNormal3f(0.0f,0.0f,-1.0f);
         glVertex3f(x+1.0f, y+1.0f, z+1.0f);
         glVertex3f(x-1.0f, y+1.0f, z+1.0f);
         glVertex3f(x-1.0f, y-1.0f, z+1.0f);
@@ -280,6 +291,7 @@ public class Cube {
         glBegin(GL_LINE_LOOP);
         //Back
         glColor3f(0.0f, 0.0f, 0.0f);
+        glNormal3f(0.0f,0.0f,1.0f);
         glVertex3f(x+1.0f, y-1.0f, z-1.0f);
         glVertex3f(x-1.0f, y-1.0f, z-1.0f);
         glVertex3f(x-1.0f, y+1.0f, z-1.0f);

@@ -30,6 +30,7 @@ public class CubeWorld {
     private DisplayMode displayMode;
     private FloatBuffer lightPosition;
     private FloatBuffer whiteLight;
+    private FloatBuffer redLight;
     private FloatBuffer diffuseLight;
     /**
      * method: start
@@ -72,11 +73,12 @@ public class CubeWorld {
      * purpose: sets up Open GL
      */
     private void initGL() {
-        
+        initLightArrays();
         glClearColor(0.0f, 0.8f, 0.9f, 0.0f);
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        initLightArrays();
+        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        glLight(GL_LIGHT1, GL_POSITION, lightPosition);
         GLU.gluPerspective(100.0f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glShadeModel(GL_SMOOTH);
@@ -87,15 +89,21 @@ public class CubeWorld {
         glEnableClientState(GL_COLOR_ARRAY);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_NORMALIZE);
-        glLight(GL_LIGHT0, GL_POSITION, lightPosition);
-        //glLight(GL_LIGHT0, GL_SPOT_DIRECTION, (FloatBuffer)BufferUtils.createFloatBuffer(4).put(new float[]{0,-0.3f,-1.0f,0}).flip());
+        
+        //glLight(GL_LIGHT1, GL_SPOT_DIRECTION, (FloatBuffer)BufferUtils.createFloatBuffer(4).put(new float[]{0.0f,0.0f,1.0f,0.0f}).flip());
         glLight(GL_LIGHT0,GL_SPECULAR, whiteLight);
         glLight(GL_LIGHT0, GL_DIFFUSE, whiteLight);
         glLight(GL_LIGHT0, GL_AMBIENT, diffuseLight);
-        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45f); 
-        glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2.0f);
+        glLight(GL_LIGHT1,GL_SPECULAR, redLight);
+        glLight(GL_LIGHT1, GL_DIFFUSE, redLight);
+        glLight(GL_LIGHT1, GL_AMBIENT, diffuseLight);
+         glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0f); 
+        glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 4.0f);
+        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 60.0f); 
+        glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 4.0f);
         glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
+        //glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHT1);
 
     }
 
@@ -113,11 +121,16 @@ public class CubeWorld {
     
     private void initLightArrays(){
         lightPosition = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(0f).put(0f).put(2f).put(1f).flip();
+        lightPosition.put(0f).put(0f).put(0f).put(1f).flip();
         
         
         whiteLight = BufferUtils.createFloatBuffer(4);
         whiteLight.put(1.0f).put(1.0f).put(1.0f).put(0.0f).flip();
+        
+        redLight = BufferUtils.createFloatBuffer(4);
+        redLight.put(1.0f).put(0.0f).put(0.0f).put(1.0f).flip();
+        
+        
         
         diffuseLight = BufferUtils.createFloatBuffer(4);
         diffuseLight.put(.5f).put(.5f).put(.5f).put(1.0f).flip();
@@ -128,7 +141,7 @@ public class CubeWorld {
      * purpose: runs the camera calls the render method
      */
     public void gameLoop() throws Exception {
-        FPCameraController camera = new FPCameraController(-30,-40, -30);
+        FPCameraController camera = new FPCameraController(0,0, 0);
         double tick = 0;
         float dx = 0.0f;
         float dy = 0.0f;
@@ -197,7 +210,6 @@ public class CubeWorld {
             camera.lookThrough();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             //you would draw your scene here.
-            
             assHatt.render();
             //draw the buffer to the screen
             Display.update();

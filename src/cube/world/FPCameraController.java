@@ -43,7 +43,7 @@ public class FPCameraController {
         lPosition = new Vector3f(x, y, z);
         lDirection = new Vector3f(0,0 ,-1.0f);
         lPosition.x = 0.0f;
-        lPosition.y= 15f;
+        lPosition.y= 15.0f;
         lPosition.z=0.0f;
         lightPosition = BufferUtils.createFloatBuffer(4);
         lightDirection = BufferUtils.createFloatBuffer(4);
@@ -82,7 +82,7 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
         position.x += xOffset;
         position.z -= zOffset;
-         updateLight();
+        updateLight();
     }
     
     //strafes the camera left relative to its current rotation (yaw)
@@ -92,7 +92,7 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw - 90));
         position.x -= xOffset;
         position.z += zOffset;
-         updateLight();
+        updateLight();
     }
     
     //strafes the camera right relative to its current rotation (yaw)
@@ -102,7 +102,7 @@ public class FPCameraController {
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw + 90));
         position.x -= xOffset;
         position.z += zOffset;
-         updateLight();
+        updateLight();
     }
     
     //moves the camera up relative to its current rotation (yaw)
@@ -125,17 +125,21 @@ public class FPCameraController {
     
     public void lookThrough() {
         tick++;
-        lightPosition = BufferUtils.createFloatBuffer(4);
         
         
-        lightPosition.put(0.0f).put(3.0f).put(2.0f).put(0.0f).flip();
         
+        updateLight();
+       
+        //glLight(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
         //roatate the pitch around the X axis
         glRotatef(pitch, 1.0f, 0.0f, 0.0f);
         //roatate the yaw around the Y axis
         glRotatef(yaw, 0.0f, 1.0f, 0.0f);
         //translate to the position vector's location
         glTranslatef(position.x, position.y, position.z);
+        //lightPosition.put(0.0f).put(0.0f).put(2.0f).put(1.0f).flip();
+        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
+        
         //updateLight();
         
         
@@ -159,7 +163,7 @@ public class FPCameraController {
      * the light is pointing.  This is calculated by applying rotation matricies
      * using the yaw and the pitch about the Y and X axis, respectively.
      */
-    private void updateLight(){
+    public void updateLight(){
         //FLOATS
         
         Float cosYaw, cosPitch, sinYaw, sinPitch;
@@ -177,12 +181,12 @@ public class FPCameraController {
         //Now that we have the new direction, it's time to put it to use
         
         lightDirection = BufferUtils.createFloatBuffer(4);  //the fourth will be 0, it's not used.
-        lightDirection.put(lDirection.x).put(lDirection.y).put(lDirection.z).put(0.0f).flip();
-        
-        
-       // 
+        //lightDirection.put(lDirection.x).put(lDirection.y).put(lDirection.z).put(0.0f).flip();
+        lightPosition = BufferUtils.createFloatBuffer(4);
+        lightPosition.put(position.x).put(position.y).put(position.z).put(1.0f).flip();
+        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         //glLight(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection); 
-        glLight(GL_LIGHT0, GL_POSITION, lightDirection);
+        
         
     }
     
