@@ -23,16 +23,19 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.Sys;
 import org.lwjgl.util.glu.GLU;
 import java.nio.FloatBuffer;
+import org.lwjgl.util.vector.Vector3f;
 
 
 public class CubeWorld {
-
-    private FPCameraController fp = new FPCameraController(0f,0f,0f);
+    double sumLength=0;
+    public static Chunk assHatt; //this needs to be a class variable , because reasons
+    private FPCameraController fp = new FPCameraController(0f,0f,0f, false);
     private DisplayMode displayMode;
     private FloatBuffer lightPosition;
     private FloatBuffer whiteLight;
     private FloatBuffer redLight;
     private FloatBuffer diffuseLight;
+    private int lightMode = 0; //0 Equals no light // 1 Equals White //2 Equals Red
     /**
      * method: start
      * purpose: calls the methods to make the window, start openGL
@@ -101,14 +104,14 @@ public class CubeWorld {
         glLight(GL_LIGHT0, GL_AMBIENT, whiteLight);
         glLight(GL_LIGHT1,GL_SPECULAR, redLight);
         glLight(GL_LIGHT1, GL_DIFFUSE, redLight);
-        glLight(GL_LIGHT1, GL_AMBIENT, redLight);
+        glLight(GL_LIGHT1, GL_AMBIENT, whiteLight);
         glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0f); 
         glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 4.0f);
         glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 60.0f); 
         glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 4.0f);
         glEnable(GL_LIGHTING);
-        //glEnable(GL_LIGHT0);
         glEnable(GL_LIGHT0);
+        lightMode = 1;
 
     }
 
@@ -133,7 +136,7 @@ public class CubeWorld {
         whiteLight.put(1.0f).put(1.0f).put(1.0f).put(0.0f).flip();
         
         redLight = BufferUtils.createFloatBuffer(4);
-        redLight.put(1.0f).put(0.0f).put(0.0f).put(1.0f).flip();
+        redLight.put(1.0f).put(0.0f).put(1.0f).put(1.0f).flip();
         
         
         
@@ -146,19 +149,21 @@ public class CubeWorld {
      * purpose: runs the camera calls the render method
      */
     public void gameLoop() throws Exception {
-        FPCameraController camera = new FPCameraController(-100,-100,-50);
+        FPCameraController camera = new FPCameraController(-50,-20,-50, false);
         double tick = 0;
         float dx = 0.0f;
         float dy = 0.0f;
         float dt = 0.0f; //length of frame
+        long time;
         float lastTime = 0.0f; // when the last frame was
-        long time = 0;
+        
         float mouseSensitivity = 0.09f;
         float movementSpeed = .35f;
         
+        
         //hide the mouse
         Mouse.setGrabbed(true);
-        Chunk assHatt = new Chunk(0,0,0);
+        assHatt = new Chunk(0,0,0);
         // keep looping till the display window is closed the ESC key is down
         while (!Display.isCloseRequested()
                 && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
@@ -166,6 +171,7 @@ public class CubeWorld {
             tick++;
             if (tick == 50){
                 System.out.println("X: "+ camera.position.x + " Y:"+ camera.position.y + " Z:"+ camera.position.z);
+                System.out.println("X: "+ Math.floor((-camera.position.x+1)/2) + " Y:"+Math.floor((-camera.position.y+1)/2) + " Z:"+ Math.floor((-(camera.position.z-2))/2));
                 tick = 0;
             }
             lastTime = time;
@@ -209,6 +215,29 @@ public class CubeWorld {
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                 camera.moveDown(movementSpeed);
             }
+            while(Keyboard.next()){
+                if (Keyboard.getEventKey() == Keyboard.KEY_F){
+                    if(!Keyboard.getEventKeyState()){
+                        if (lightMode == 0){
+                            lightMode++;
+                            glEnable(GL_LIGHT0);
+                        }
+                        else if (lightMode == 1){
+                            lightMode++;
+                            glDisable(GL_LIGHT0);
+                            glEnable(GL_LIGHT1);
+                        }
+                        else if (lightMode ==2){
+                            lightMode = 0;
+                            glDisable(GL_LIGHT1);
+                        }
+                    }
+                }
+                if(Keyboard.getEventKey() == Keyboard.KEY_P){
+                    if(!Keyboard.getEventKeyState())
+                        camera.toggleNoClip();
+                }
+            }
             //set the modelview matrix back to the identity
             glLoadIdentity();
             //look through the camera before you draw anything
@@ -219,11 +248,12 @@ public class CubeWorld {
             //draw the buffer to the screen
             Display.update();
             Display.sync(60);
+            
         }
 
     Display.destroy ();
     }
-        
+    
     /**
      * method:main 
      * purpose: provide an entry point for the program

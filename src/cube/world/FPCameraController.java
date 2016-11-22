@@ -23,9 +23,11 @@ import org.lwjgl.opengl.GLContext;
 
 
 public class FPCameraController {
-    //3d vector to store the camera's position in
-
+    //3d vector to store the camera's position in 
     public Vector3f position = null;
+    private boolean noClip ;
+    public Vector3f newPosition = null;
+    private Vector3f velocity;
     private Vector3f lDirection = null;
     private Vector3f lPosition = null;
     //the rotation around the Y axis of the camera
@@ -38,14 +40,17 @@ public class FPCameraController {
     
     
     
-    public FPCameraController(float x, float y, float z) {
+    public FPCameraController(float x, float y, float z, boolean noClip) {
     //instantiate position Vector3f to the x y z params.
         position = new Vector3f(x, y, z);
+        velocity = new Vector3f(0,0,0);
+        newPosition = new Vector3f(x,y,z);
         lPosition = new Vector3f(x, y, z);
         lDirection = new Vector3f(0,0 ,-1.0f);
         lPosition.x = 0.0f;
         lPosition.y= 15.0f;
         lPosition.z=0.0f;
+        this.noClip = noClip;
        
     }
     
@@ -65,55 +70,144 @@ public class FPCameraController {
         updateLight();
     }
     
+    public void toggleNoClip(){
+        if(noClip){
+            noClip=false;
+            System.out.println(" NO CLIPPING DISABLED!!!");
+        }
+        else{
+            noClip=true;
+            System.out.println(" NO CLIPPING ENABLED!!!");
+        }
+    }
+    
+    public boolean checkCollision(Vector3f position){
+        if(noClip)
+            return false;
+        Vector3f[] boundingBox= new Vector3f[8];
+        for (int i = 0;i<boundingBox.length;i++){
+            boundingBox[i] = new Vector3f();
+        }
+        boundingBox[0].x = (int)Math.floor((-position.x+2)/2);boundingBox[0].y = (int)Math.floor((-position.y)/2);boundingBox[0].z = (int)Math.floor((-position.z-1)/2);
+        boundingBox[1].x = (int)Math.floor((-position.x+2)/2);boundingBox[1].y = (int)Math.floor((-position.y)/2);boundingBox[1].z = (int)Math.floor((-position.z-3)/2);
+        boundingBox[2].x = (int)Math.floor((-position.x+2)/2);boundingBox[2].y = (int)Math.floor((-position.y+2)/2);boundingBox[2].z = (int)Math.floor((-position.z-1)/2);
+        boundingBox[3].x = (int)Math.floor((-position.x+2)/2);boundingBox[3].y = (int)Math.floor((-position.y+2)/2);boundingBox[3].z = (int)Math.floor((-position.z-3)/2);
+        boundingBox[4].x = (int)Math.floor((-position.x)/2);boundingBox[4].y = (int)Math.floor((-position.y)/2);boundingBox[4].z = (int)Math.floor((-position.z-1)/2);
+        boundingBox[5].x = (int)Math.floor((-position.x)/2);boundingBox[5].y = (int)Math.floor((-position.y)/2);boundingBox[5].z = (int)Math.floor((-position.z-3)/2);
+        boundingBox[6].x = (int)Math.floor((-position.x)/2);boundingBox[6].y = (int)Math.floor((-position.y+2)/2);boundingBox[6].z = (int)Math.floor((-position.z-1)/2);
+        boundingBox[7].x = (int)Math.floor((-position.x)/2);boundingBox[7].y = (int)Math.floor((-position.y+2)/2);boundingBox[7].z = (int)Math.floor((-position.z-3)/2);
+        int x,y,z;
+        //Put them in array indexform
+        for(int i = 0;i<boundingBox.length;i++){
+            x = (int)boundingBox[i].x;
+            y = (int)boundingBox[i].y;
+            z = (int)boundingBox[i].z;
+            //check out of bounds first
+            if ((x<0)||(y<0)||(z<0)||(x>99)||(y>99)||(z>99)){
+                return true;
+            }
+            else if(CubeWorld.assHatt.Blocks[x][y][z].isActive()){
+                return true;
+            }
+        }
+        
+        return false;
+    }   
+    
     public void walkForward(float distance) {
-        lightPosition = BufferUtils.createFloatBuffer(4);
         float xOffset = distance * (float) Math.sin(Math.toRadians(yaw));
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
-        position.x -= xOffset;
-        position.z += zOffset;
+       
+        if(!checkCollision(new Vector3f(position.x-xOffset,position.y,position.z+zOffset))){
+            position.x -= xOffset;
+            position.z += zOffset;
+        }
+        else{
+            
+            position.x += xOffset;
+            position.z -= zOffset;
+          
+        }
+       
         updateLight();
     }
     
     public void walkBackwards(float distance) {
-        lightPosition = BufferUtils.createFloatBuffer(4);
         float xOffset = distance * (float) Math.sin(Math.toRadians(yaw));
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
-        position.x += xOffset;
-        position.z -= zOffset;
+        
+        if(!checkCollision(new Vector3f(position.x+xOffset,position.y,position.z-zOffset))){
+            position.x += xOffset;
+            position.z -= zOffset;
+        }
+        else{
+          
+            position.x -= xOffset;
+            position.z += zOffset;
+          
+        }
+        
         updateLight();
     }
     
     //strafes the camera left relative to its current rotation (yaw)
     public void strafeLeft(float distance) {
-        lightPosition = BufferUtils.createFloatBuffer(4);
-        float xOffset = distance * (float) Math.sin(Math.toRadians(yaw - 90));
-        float zOffset = distance * (float) Math.cos(Math.toRadians(yaw - 90));
-        position.x -= xOffset;
-        position.z += zOffset;
+        float xOffset = distance * (float) Math.sin(Math.toRadians(yaw-90));
+        float zOffset = distance * (float) Math.cos(Math.toRadians(yaw-90));
+       
+        if(!checkCollision(new Vector3f(position.x-xOffset,position.y,position.z+zOffset))){
+            position.x -= xOffset;
+            position.z += zOffset;
+        }
+        else{
+            
+            position.x += xOffset;
+            position.z -= zOffset;
+          
+        }
+        
+        
         updateLight();
     }
     
     //strafes the camera right relative to its current rotation (yaw)
     public void strafeRight(float distance) {
-        lightPosition = BufferUtils.createFloatBuffer(4);
-        float xOffset = distance * (float) Math.sin(Math.toRadians(yaw + 90));
-        float zOffset = distance * (float) Math.cos(Math.toRadians(yaw + 90));
-        position.x -= xOffset;
-        position.z += zOffset;
+        float xOffset = distance * (float) Math.sin(Math.toRadians(yaw+90));
+        float zOffset = distance * (float) Math.cos(Math.toRadians(yaw+90));
+        
+        if(!checkCollision(new Vector3f(position.x-xOffset,position.y,position.z+zOffset))){
+            position.x -= xOffset;
+            position.z += zOffset;
+        }
+        else{
+            
+            position.x += xOffset;
+            position.z -= zOffset;
+          
+        }
+        
         updateLight();
     }
     
     //moves the camera up relative to its current rotation (yaw)
     public void moveUp(float distance) {
-        lightPosition = BufferUtils.createFloatBuffer(4);
-        position.y -= distance;
+        
+        if(!checkCollision(new Vector3f(position.x,position.y-distance,position.z)))
+            position.y -= distance;
+        else
+            position.y += distance;
+        
         updateLight();
     }
     //moves the camera down
 
     public void moveDown(float distance) {
-        lightPosition = BufferUtils.createFloatBuffer(4);
-        position.y += distance;
+        
+        if(!checkCollision(new Vector3f(position.x,position.y+distance,position.z)))
+            position.y += distance;
+        else
+            position.y -= distance;
+       
         updateLight();
     }
     
@@ -137,15 +231,6 @@ public class FPCameraController {
         //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         
         updateLight();
-        
-        
-        if (tick%100==0){
-            System.out.println("Light X:" + position.x + "y: "+ position.y +" z" +position.z);
-            System.out.println("yaw : "+ yaw + "pitch :" + pitch);
-            System.out.println("LDIR : " + lDirection.toString());
-        }
-        
-        
     }   
     
     
@@ -179,9 +264,8 @@ public class FPCameraController {
         
         lightPosition = BufferUtils.createFloatBuffer(4);
         lightPosition.put(position.x).put(position.y).put(position.z).put(1.0f).flip();
-        //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         glLight(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection); 
-        
+        glLight(GL_LIGHT1, GL_SPOT_DIRECTION, lightDirection); 
         
         
     }
