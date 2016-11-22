@@ -57,8 +57,8 @@ public class CubeWorld {
         Display.setFullscreen(false);
         DisplayMode d[] = Display.getAvailableDisplayModes();
         for (int i = 0; i < d.length; i++) {
-            if (d[i].getWidth() == 640
-                    && d[i].getHeight() == 480
+            if (d[i].getWidth() == 1024
+                    && d[i].getHeight() == 768
                     && d[i].getBitsPerPixel() == 32) {
                 displayMode = d[i];
                 break;
@@ -89,13 +89,13 @@ public class CubeWorld {
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         glEnable(GL_TEXTURE_2D);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY); //this line was soooooo important
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_NORMALIZE);
-        
-        //glLight(GL_LIGHT1, GL_SPOT_DIRECTION, (FloatBuffer)BufferUtils.createFloatBuffer(4).put(new float[]{0.0f,0.0f,-1.0f,0.0f}).flip());
+        glEnable(GL_BLEND);
+        glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glLight(GL_LIGHT0,GL_SPECULAR, whiteLight);
         glLight(GL_LIGHT0, GL_DIFFUSE, whiteLight);
         glLight(GL_LIGHT0, GL_AMBIENT, whiteLight);
@@ -146,7 +146,7 @@ public class CubeWorld {
      * purpose: runs the camera calls the render method
      */
     public void gameLoop() throws Exception {
-        FPCameraController camera = new FPCameraController(0,0, 0);
+        FPCameraController camera = new FPCameraController(-100,-100,-50);
         double tick = 0;
         float dx = 0.0f;
         float dy = 0.0f;
