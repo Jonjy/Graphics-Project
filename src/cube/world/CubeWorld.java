@@ -17,6 +17,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.opengl.GLContext;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.Sys;
@@ -39,6 +40,7 @@ public class CubeWorld {
      */
     public void start(){
         try {
+            
             createWindow();
             initGL();
             gameLoop();
@@ -82,28 +84,31 @@ public class CubeWorld {
         GLU.gluPerspective(100.0f, (float) displayMode.getWidth() / (float) displayMode.getHeight(), 0.1f, 300.0f);
         glMatrixMode(GL_MODELVIEW);
         glShadeModel(GL_SMOOTH);
+        glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0f);
+        glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 1.0f);
         glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         glEnable(GL_TEXTURE_2D);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_NORMALIZE);
         
-        //glLight(GL_LIGHT1, GL_SPOT_DIRECTION, (FloatBuffer)BufferUtils.createFloatBuffer(4).put(new float[]{0.0f,0.0f,1.0f,0.0f}).flip());
+        //glLight(GL_LIGHT1, GL_SPOT_DIRECTION, (FloatBuffer)BufferUtils.createFloatBuffer(4).put(new float[]{0.0f,0.0f,-1.0f,0.0f}).flip());
         glLight(GL_LIGHT0,GL_SPECULAR, whiteLight);
         glLight(GL_LIGHT0, GL_DIFFUSE, whiteLight);
-        glLight(GL_LIGHT0, GL_AMBIENT, diffuseLight);
+        glLight(GL_LIGHT0, GL_AMBIENT, whiteLight);
         glLight(GL_LIGHT1,GL_SPECULAR, redLight);
         glLight(GL_LIGHT1, GL_DIFFUSE, redLight);
-        glLight(GL_LIGHT1, GL_AMBIENT, diffuseLight);
-         glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0f); 
+        glLight(GL_LIGHT1, GL_AMBIENT, redLight);
+        glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 45.0f); 
         glLightf(GL_LIGHT1, GL_SPOT_EXPONENT, 4.0f);
         glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 60.0f); 
         glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 4.0f);
         glEnable(GL_LIGHTING);
         //glEnable(GL_LIGHT0);
-        glEnable(GL_LIGHT1);
+        glEnable(GL_LIGHT0);
 
     }
 

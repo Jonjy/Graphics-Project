@@ -19,6 +19,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import static org.lwjgl.opengl.GL11.*;
 import org.lwjgl.Sys;
+import org.lwjgl.opengl.GLContext;
 
 
 public class FPCameraController {
@@ -45,9 +46,6 @@ public class FPCameraController {
         lPosition.x = 0.0f;
         lPosition.y= 15.0f;
         lPosition.z=0.0f;
-        lightPosition = BufferUtils.createFloatBuffer(4);
-        lightDirection = BufferUtils.createFloatBuffer(4);
-        lightPosition.put(position.x).put(position.y).put(position.z).put(1.0f).flip();
        
     }
     
@@ -126,9 +124,7 @@ public class FPCameraController {
     public void lookThrough() {
         tick++;
         
-        
-        
-        updateLight();
+        //updateLight();
        
         //glLight(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection);
         //roatate the pitch around the X axis
@@ -140,12 +136,11 @@ public class FPCameraController {
         //lightPosition.put(0.0f).put(0.0f).put(2.0f).put(1.0f).flip();
         //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
         
-        //updateLight();
+        updateLight();
         
         
         if (tick%100==0){
             System.out.println("Light X:" + position.x + "y: "+ position.y +" z" +position.z);
-            
             System.out.println("yaw : "+ yaw + "pitch :" + pitch);
             System.out.println("LDIR : " + lDirection.toString());
         }
@@ -165,7 +160,6 @@ public class FPCameraController {
      */
     public void updateLight(){
         //FLOATS
-        
         Float cosYaw, cosPitch, sinYaw, sinPitch;
         
         cosYaw = (float)Math.cos(Math.toRadians(yaw));
@@ -178,14 +172,16 @@ public class FPCameraController {
         lDirection.y = -sinPitch;
         lDirection.z = -cosPitch*cosYaw; 
         lDirection.normalise();
-        //Now that we have the new direction, it's time to put it to use
+        
         
         lightDirection = BufferUtils.createFloatBuffer(4);  //the fourth will be 0, it's not used.
-        //lightDirection.put(lDirection.x).put(lDirection.y).put(lDirection.z).put(0.0f).flip();
+        lightDirection.put(lDirection.x).put(lDirection.y).put(lDirection.z).put(0.0f).flip();
+        
         lightPosition = BufferUtils.createFloatBuffer(4);
         lightPosition.put(position.x).put(position.y).put(position.z).put(1.0f).flip();
         //glLight(GL_LIGHT0, GL_POSITION, lightPosition);
-        //glLight(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection); 
+        glLight(GL_LIGHT0, GL_SPOT_DIRECTION, lightDirection); 
+        
         
         
     }

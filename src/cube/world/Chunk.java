@@ -20,17 +20,18 @@ public class Chunk {
     private int VBOTextureHandle;
     private Texture texture;
     private int VBOColorHandle;
+    private int VBONormalHandle;
     private int StartX, StartY, StartZ;
     private Random r;
 
     public void render() {
         glPushMatrix();
 //        glPushMatrix();  having this twice seemed to overflow things.
-        glBindBuffer(GL_ARRAY_BUFFER,
-                VBOVertexHandle);
+        glBindBuffer(GL_ARRAY_BUFFER,VBOVertexHandle);
         glVertexPointer(3, GL_FLOAT, 0, 0L);
-        glBindBuffer(GL_ARRAY_BUFFER,
-                VBOColorHandle);
+        glBindBuffer(GL_ARRAY_BUFFER, VBONormalHandle);
+        glNormalPointer(GL_FLOAT,0,0 );
+        glBindBuffer(GL_ARRAY_BUFFER,   VBOColorHandle);
         glColorPointer(3, GL_FLOAT, 0, 0L);
         glBindBuffer(GL_ARRAY_BUFFER, VBOTextureHandle);
         glBindTexture(GL_TEXTURE_2D,1);
@@ -43,23 +44,24 @@ public class Chunk {
 
     public void rebuildMesh( float startX, float startY, float startZ) {
         float height;
-        VBOColorHandle = glGenBuffers();
+        //make a noise object
         SimplexNoise noise = new SimplexNoise(40,.025,r.nextInt());
+        
+        //initialize things
+        VBOColorHandle = glGenBuffers();
         VBOVertexHandle = glGenBuffers();
         VBOTextureHandle = glGenBuffers();
-        FloatBuffer VertexTextureData
-                = BufferUtils.createFloatBuffer((CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE)*6*12);
-        FloatBuffer VertexPositionData
-                = BufferUtils.createFloatBuffer(
-                        (CHUNK_SIZE * CHUNK_SIZE
-                        * CHUNK_SIZE) * 6 * 12);
-        FloatBuffer VertexColorData
-                = BufferUtils.createFloatBuffer(
-                        (CHUNK_SIZE * CHUNK_SIZE
-                        * CHUNK_SIZE) * 6 * 12);
+        VBONormalHandle = glGenBuffers();
+        
+        FloatBuffer VertexTextureData = BufferUtils.createFloatBuffer((CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE)*6*12);
+        FloatBuffer VertexPositionData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        FloatBuffer VertexNormalData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        FloatBuffer VertexColorData = BufferUtils.createFloatBuffer((CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE) * 6 * 12);
+        
+        //iterate through and put data in the buffers as appropriate
         for (float x = 0; x < CHUNK_SIZE; x += 1) {
             for (float z = 0; z < CHUNK_SIZE; z += 1) {
-                
+                //calculate the height at each x,z position
                 height = (int)(startY + Math.abs((int)(100*noise.getNoise((int)x,(int)z)*CUBE_LENGTH)));
                 for (float y = 0; y < CHUNK_SIZE; y++) {
                     if (y<=height){
@@ -69,6 +71,7 @@ public class Chunk {
                                         + (int) (CHUNK_SIZE * .8)),
                                         (float) (startZ + z
                                         * CUBE_LENGTH)));
+                        VertexNormalData.put(generateNormals());
                         VertexColorData.put(
                                 createCubeVertexCol(
                                         getCubeColor(
@@ -80,15 +83,18 @@ public class Chunk {
         }
         VertexColorData.flip();
         VertexPositionData.flip();
+        VertexNormalData.flip();
         VertexTextureData.flip();
         glBindBuffer(GL_ARRAY_BUFFER,VBOVertexHandle);
         glBufferData(GL_ARRAY_BUFFER,VertexPositionData,GL_STATIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER,VBONormalHandle);
+        glBufferData(GL_ARRAY_BUFFER,VertexNormalData, GL_STATIC_DRAW); 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+        
         glBindBuffer(GL_ARRAY_BUFFER,VBOColorHandle);
         glBufferData(GL_ARRAY_BUFFER, VertexColorData,GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, VBOTextureHandle);
-        glBufferData(GL_ARRAY_BUFFER, VertexTextureData,
-        GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, VertexTextureData, GL_STATIC_DRAW);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
@@ -102,6 +108,48 @@ public class Chunk {
         return cubeColors;
     }
 
+    /**
+     * Each vertex needs a Normal, so sayth the OpenGL bible. 
+     * This will create the 24 normals that a cube will have, in the same order
+     * as the createCube method.
+     * 
+     * @return 
+     */
+    public static float[] generateNormals(){
+        return new float[]{
+        //TOP
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        //Bottom
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        //Front
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f,
+        //Back
+        0.0f, 1.0f, -1.0f,
+        0.0f, 1.0f, -1.0f,
+        0.0f, 1.0f, -1.0f,
+        0.0f, 1.0f, -1.0f,
+        //Left
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        //Right
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.0f
+        };
+    }
+    
     public static float[] createCube(float x, float y,
             float z) {
         int offset = CUBE_LENGTH / 2;
