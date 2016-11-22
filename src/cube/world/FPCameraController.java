@@ -23,6 +23,9 @@ import org.lwjgl.opengl.GLContext;
 
 
 public class FPCameraController {
+    
+    
+    
     //3d vector to store the camera's position in 
     public Vector3f position = null;
     private boolean noClip ;
