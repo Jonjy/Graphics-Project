@@ -22,7 +22,8 @@ public class Collision {
         RIGHT(3),
         FRONT(4),
         BACK(5),
-        BOTTOM(6);
+        BOTTOM(6),
+        OTHER(7);
         
         int collisionID;
                 
@@ -37,28 +38,36 @@ public class Collision {
     
     public Collision(CollisionType type){
         collision = type;
+        
+        normal = new Vector3f(0,0,0);
+        
+    }
+    
+    
+    public Vector3f getNormal(){
+        return normal;
+    }
+    
+    public void addCollision(CollisionType type){
         switch(type){
-        case NONE:
-            normal = new Vector3f(1,1,1);
-            break;
-        case TOP:
-            normal = new Vector3f(0,-1,0);
-            break;
-        case BOTTOM:
-            normal = new Vector3f(0,1,0);
-            break;
-        case LEFT:
-            normal = new Vector3f(1,0,0);
-            break;
-        case RIGHT:
-            normal = new Vector3f(-1,0,0);
-            break;
-        case FRONT:
-            normal = new Vector3f(0,0,-1);
-            break;
-        case BACK:
-            normal = new Vector3f(0,0,1);
-            break;
+            case TOP:
+                normal.y = -1;
+                break;
+            case BOTTOM:
+                normal.y = 1;
+                break;
+            case LEFT:
+                normal.x = 1;
+                break;
+            case RIGHT:
+                normal.x = -1;
+                break;
+            case FRONT:
+                normal.z = -1;
+                break;
+            case BACK:
+                normal.z = 1;
+                break;
         }
     }
     
@@ -69,40 +78,39 @@ public class Collision {
      * @return 
      */
     public static Collision checkCollision(Vector3f position, Boolean noClip){
-        int truX, truY, truZ;
-        truX = (int)Math.floor((-position.x+1)/2);
-        truY = (int)Math.floor((-position.y+1)/2);
-        truZ = (int)Math.floor((-position.x-2)/2)
+        int x, y, z;
+        x = (int)Math.floor(-(position.x+1)/2);
+        y = (int)Math.floor(-(position.y+1)/2);
+        z = (int)Math.floor(-(position.z-2)/2);
+        System.out.println( x+" "+y+" "+z +" "+position.z);
+        //short circuit if no clipping is on
         if(noClip) 
             return new Collision(Collision.CollisionType.NONE);
-        Vector3f[] boundingBox= new Vector3f[8];
-        for (int i = 0;i<boundingBox.length;i++){
-            boundingBox[i] = new Vector3f();
-        }
-        boundingBox[0].x = (int)Math.floor((-position.x+2)/2);boundingBox[0].y = (int)Math.floor((-position.y)/2);boundingBox[0].z = (int)Math.floor((-position.z-1)/2);
-        boundingBox[1].x = (int)Math.floor((-position.x+2)/2);boundingBox[1].y = (int)Math.floor((-position.y)/2);boundingBox[1].z = (int)Math.floor((-position.z-3)/2);
-        boundingBox[2].x = (int)Math.floor((-position.x+2)/2);boundingBox[2].y = (int)Math.floor((-position.y+2)/2);boundingBox[2].z = (int)Math.floor((-position.z-1)/2);
-        boundingBox[3].x = (int)Math.floor((-position.x+2)/2);boundingBox[3].y = (int)Math.floor((-position.y+2)/2);boundingBox[3].z = (int)Math.floor((-position.z-3)/2);
-        boundingBox[4].x = (int)Math.floor((-position.x)/2);boundingBox[4].y = (int)Math.floor((-position.y)/2);boundingBox[4].z = (int)Math.floor((-position.z-1)/2);
-        boundingBox[5].x = (int)Math.floor((-position.x)/2);boundingBox[5].y = (int)Math.floor((-position.y)/2);boundingBox[5].z = (int)Math.floor((-position.z-3)/2);
-        boundingBox[6].x = (int)Math.floor((-position.x)/2);boundingBox[6].y = (int)Math.floor((-position.y+2)/2);boundingBox[6].z = (int)Math.floor((-position.z-1)/2);
-        boundingBox[7].x = (int)Math.floor((-position.x)/2);boundingBox[7].y = (int)Math.floor((-position.y+2)/2);boundingBox[7].z = (int)Math.floor((-position.z-3)/2);
-        int x,y,z;
-        //Put them in array indexform
-        for(int i = 0;i<boundingBox.length;i++){
-            x = (int)boundingBox[i].x;
-            y = (int)boundingBox[i].y;
-            z = (int)boundingBox[i].z;
-            //check out of bounds first
-            if ((x<0)||(y<0)||(z<0)||(x>99)||(y>99)||(z>99)){
-                return true;
-            }
-            else if(CubeWorld.assHatt.Blocks[x][y][z].isActive()){
-                //Check Which Direction
-            }
-        }
         
-        return new Collision(Collision.CollisionType.NONE);
+        Collision result = new Collision(CollisionType.OTHER);
+             
+        if(((x-1)<0)||(CubeWorld.assHatt.Blocks[x-1][y][z].isActive())){
+            result.addCollision(CollisionType.RIGHT);
+        }
+        if(((x+1)>99)||(CubeWorld.assHatt.Blocks[x+1][y][z].isActive())){
+            result.addCollision(CollisionType.LEFT);
+        }
+        if(((y+1)>99)||(CubeWorld.assHatt.Blocks[x][y+1][z].isActive())){
+            result.addCollision(CollisionType.BOTTOM);
+        }
+        if(((y-1)<0)||(CubeWorld.assHatt.Blocks[x][y-1][z].isActive())){
+            result.addCollision(CollisionType.TOP);
+        }
+        if(((z+1)>99)||(CubeWorld.assHatt.Blocks[x][y][z+1].isActive())){
+            result.addCollision(CollisionType.FRONT);
+        }
+        if(((z-1)<0)||(CubeWorld.assHatt.Blocks[x][y][z-1].isActive())){
+            result.addCollision(CollisionType.BACK);
+        }
+ 
+        
+        
+        return result;
     }  
     
     public CollisionType getType(){

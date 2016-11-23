@@ -84,132 +84,75 @@ public class FPCameraController {
         }
     }
     
-    public boolean checkCollision(Vector3f position){
-        if(noClip)
-            return false;
-        Vector3f[] boundingBox= new Vector3f[8];
-        for (int i = 0;i<boundingBox.length;i++){
-            boundingBox[i] = new Vector3f();
-        }
-        boundingBox[0].x = (int)Math.floor((-position.x+2)/2);boundingBox[0].y = (int)Math.floor((-position.y)/2);boundingBox[0].z = (int)Math.floor((-position.z-1)/2);
-        boundingBox[1].x = (int)Math.floor((-position.x+2)/2);boundingBox[1].y = (int)Math.floor((-position.y)/2);boundingBox[1].z = (int)Math.floor((-position.z-3)/2);
-        boundingBox[2].x = (int)Math.floor((-position.x+2)/2);boundingBox[2].y = (int)Math.floor((-position.y+2)/2);boundingBox[2].z = (int)Math.floor((-position.z-1)/2);
-        boundingBox[3].x = (int)Math.floor((-position.x+2)/2);boundingBox[3].y = (int)Math.floor((-position.y+2)/2);boundingBox[3].z = (int)Math.floor((-position.z-3)/2);
-        boundingBox[4].x = (int)Math.floor((-position.x)/2);boundingBox[4].y = (int)Math.floor((-position.y)/2);boundingBox[4].z = (int)Math.floor((-position.z-1)/2);
-        boundingBox[5].x = (int)Math.floor((-position.x)/2);boundingBox[5].y = (int)Math.floor((-position.y)/2);boundingBox[5].z = (int)Math.floor((-position.z-3)/2);
-        boundingBox[6].x = (int)Math.floor((-position.x)/2);boundingBox[6].y = (int)Math.floor((-position.y+2)/2);boundingBox[6].z = (int)Math.floor((-position.z-1)/2);
-        boundingBox[7].x = (int)Math.floor((-position.x)/2);boundingBox[7].y = (int)Math.floor((-position.y+2)/2);boundingBox[7].z = (int)Math.floor((-position.z-3)/2);
-        int x,y,z;
-        //Put them in array indexform
-        for(int i = 0;i<boundingBox.length;i++){
-            x = (int)boundingBox[i].x;
-            y = (int)boundingBox[i].y;
-            z = (int)boundingBox[i].z;
-            //check out of bounds first
-            if ((x<0)||(y<0)||(z<0)||(x>99)||(y>99)||(z>99)){
-                return true;
-            }
-            else if(CubeWorld.assHatt.Blocks[x][y][z].isActive()){
-                return true;
-            }
-        }
-        
-        return false;
-    }   
+   
     
     public void walkForward(float distance) {
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
         float xOffset = distance * (float) Math.sin(Math.toRadians(yaw));
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
-       
-        if(!checkCollision(new Vector3f(position.x-xOffset,position.y,position.z+zOffset))){
-            position.x -= xOffset;
-            position.z += zOffset;
+        if(collision.getType()!=Collision.CollisionType.NONE){
+            System.out.println(" Collision Type is :" +collision.getNormal());
         }
-        else{
-            
-            position.x += xOffset;
-            position.z -= zOffset;
-          
-        }
+        position.x-= xOffset +(-collision.getNormal().x*xOffset);
+        position.z+= zOffset +(-collision.getNormal().z*zOffset);
        
         updateLight();
     }
     
     public void walkBackwards(float distance) {
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
         float xOffset = distance * (float) Math.sin(Math.toRadians(yaw));
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
+        if(collision.getType()!=Collision.CollisionType.NONE){
+            System.out.println(" Collision Type is :" +collision.getType());
+        }
+        position.x+= xOffset +(-collision.getNormal().x*xOffset);
+        position.z-= zOffset +(-collision.getNormal().z*zOffset);
         
-        if(!checkCollision(new Vector3f(position.x+xOffset,position.y,position.z-zOffset))){
-            position.x += xOffset;
-            position.z -= zOffset;
-        }
-        else{
-          
-            position.x -= xOffset;
-            position.z += zOffset;
-          
-        }
         
         updateLight();
     }
     
     //strafes the camera left relative to its current rotation (yaw)
     public void strafeLeft(float distance) {
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
         float xOffset = distance * (float) Math.sin(Math.toRadians(yaw-90));
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw-90));
-       
-        if(!checkCollision(new Vector3f(position.x-xOffset,position.y,position.z+zOffset))){
-            position.x -= xOffset;
-            position.z += zOffset;
-        }
-        else{
-            
-            position.x += xOffset;
-            position.z -= zOffset;
-          
-        }
         
+        position.x-= xOffset -(-collision.getNormal().x*xOffset);
+        position.z+= zOffset -(-collision.getNormal().z*zOffset);
+       
         
         updateLight();
     }
     
     //strafes the camera right relative to its current rotation (yaw)
     public void strafeRight(float distance) {
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
         float xOffset = distance * (float) Math.sin(Math.toRadians(yaw+90));
         float zOffset = distance * (float) Math.cos(Math.toRadians(yaw+90));
         
-        if(!checkCollision(new Vector3f(position.x-xOffset,position.y,position.z+zOffset))){
-            position.x -= xOffset;
-            position.z += zOffset;
-        }
-        else{
-            
-            position.x += xOffset;
-            position.z -= zOffset;
-          
-        }
+        position.x-= xOffset -(-collision.getNormal().x*xOffset);
+        position.z+= zOffset -(-collision.getNormal().z*zOffset);
+        
         
         updateLight();
     }
     
     //moves the camera up relative to its current rotation (yaw)
     public void moveUp(float distance) {
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
         
-        if(!checkCollision(new Vector3f(position.x,position.y-distance,position.z)))
-            position.y -= distance;
-        else
-            position.y += distance;
+        position.y -= distance -(collision.getNormal().y*distance);    
         
         updateLight();
     }
     //moves the camera down
 
     public void moveDown(float distance) {
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
         
-        if(!checkCollision(new Vector3f(position.x,position.y+distance,position.z)))
-            position.y += distance;
-        else
-            position.y -= distance;
+        position.y += distance -(-collision.getNormal().y*distance);   
        
         updateLight();
     }

@@ -91,7 +91,7 @@ public class Chunk {
                     for (float y = 0; y < 3; y++) {
                         if (!Blocks[(int)x][(int)y][(int)z].isActive()){
                             Blocks[(int) x][(int) y][(int) z].setBlockType(Cube.BlockType.BlockType_Water);
-                            Blocks[(int) x][(int) y][(int) z].SetActive(true);
+                            //Blocks[(int) x][(int) y][(int) z].SetActive(true);
                             Blocks[(int) x][(int) y][(int) z].setCoords((float) (startX + x* CUBE_LENGTH),
                                         (float) (startY + y *CUBE_LENGTH),
                                         (float) (startZ + z * CUBE_LENGTH));
