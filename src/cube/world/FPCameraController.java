@@ -164,7 +164,7 @@ public class FPCameraController {
     public void applyGravity(){
         moveDown(velocity.y);
         if (velocity.y < 2)
-            velocity.y += .25f;
+            velocity.y += .1f;
     }
 
     public void moveDown(float distance) {

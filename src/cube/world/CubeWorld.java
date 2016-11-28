@@ -222,7 +222,7 @@ public class CubeWorld {
                 if(camera.noClip)
                     camera.moveUp(movementSpeed*2);
                 else
-                    camera.setVerticalVelocity(-2.0f);
+                    camera.setVerticalVelocity(-.8f);
             }
 
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
