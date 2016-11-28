@@ -60,10 +60,10 @@ public class Collision {
                 normal.x = 1;
                 break;
             case RIGHT:
-                normal.x = -1;
+                normal.x = 1;
                 break;
             case FRONT:
-                normal.z = -1;
+                normal.z = 1;
                 break;
             case BACK:
                 normal.z = 1;
@@ -74,10 +74,12 @@ public class Collision {
     /**
      * TODO :  FINISH this.  It will check for collisions and return
      * @param position
+     * @param direction
      * @param noClip
+     * 
      * @return 
      */
-    public static Collision checkCollision(Vector3f position, Boolean noClip){
+    public static Collision checkCollision(Vector3f position,Vector3f direction, Boolean noClip){
         int x, y, z;
         x = (int)Math.floor(-(position.x+1)/2);
         y = (int)Math.floor(-(position.y+1)/2);
@@ -88,26 +90,38 @@ public class Collision {
             return new Collision(Collision.CollisionType.NONE);
         
         Collision result = new Collision(CollisionType.OTHER);
-             
-        if(((x-1)<0)||(CubeWorld.assHatt.Blocks[x-1][y][z].isActive())){
-            result.addCollision(CollisionType.RIGHT);
+        
+        if(direction.z>0){
+            if((z-1<0)||(CubeWorld.assHatt.Blocks[x][y][z-1].isActive())||(CubeWorld.assHatt.Blocks[x][y-1][z-1].isActive())){
+                result.addCollision(CollisionType.BACK);
+            }
         }
-        if(((x+1)>99)||(CubeWorld.assHatt.Blocks[x+1][y][z].isActive())){
-            result.addCollision(CollisionType.LEFT);
+        if(direction.z<0){
+            if((z+1>99)||(CubeWorld.assHatt.Blocks[x][y-1][z+1].isActive())||(CubeWorld.assHatt.Blocks[x][y][z+1].isActive())){
+                result.addCollision(CollisionType.FRONT);
+            }
         }
-        if(((y+1)>99)||(CubeWorld.assHatt.Blocks[x][y+1][z].isActive())){
-            result.addCollision(CollisionType.BOTTOM);
+        if(direction.x>0){
+            if(((x-1)<0)||(CubeWorld.assHatt.Blocks[x-1][y-1][z].isActive())||(CubeWorld.assHatt.Blocks[x-1][y][z].isActive())){
+                result.addCollision(CollisionType.RIGHT); 
+            }
         }
-        if(((y-1)<0)||(CubeWorld.assHatt.Blocks[x][y-1][z].isActive())){
-            result.addCollision(CollisionType.TOP);
+        if(direction.x<0){
+            if(((x+1)>99)||(CubeWorld.assHatt.Blocks[x+1][y-1][z].isActive())||(CubeWorld.assHatt.Blocks[x+1][y][z].isActive())){
+                 result.addCollision(CollisionType.LEFT);  
+            }
         }
-        if(((z+1)>99)||(CubeWorld.assHatt.Blocks[x][y][z+1].isActive())){
-            result.addCollision(CollisionType.FRONT);
+        if(direction.y<0){
+            if(((y+1)>99)||(CubeWorld.assHatt.Blocks[x][y+1][z].isActive())){
+                result.addCollision(CollisionType.BOTTOM);
+            }
         }
-        if(((z-1)<0)||(CubeWorld.assHatt.Blocks[x][y][z-1].isActive())){
-            result.addCollision(CollisionType.BACK);
+        if(direction.y>0){
+            if(((y-1)<0)||(CubeWorld.assHatt.Blocks[x][y-2][z].isActive())){
+                result.addCollision(CollisionType.TOP);
+            }
         }
- 
+        
         
         
         return result;

@@ -28,13 +28,13 @@ public class FPCameraController {
     
     //3d vector to store the camera's position in 
     public Vector3f position = null;
-    private boolean noClip ;
+    public boolean noClip ;
     public Vector3f newPosition = null;
     private Vector3f velocity;
     private Vector3f lDirection = null;
     private Vector3f lPosition = null;
     //the rotation around the Y axis of the camera
-    private float yaw = 0.0f;
+    public float yaw = 0.0f;
     //the rotation around the X axis of the camera
     private float pitch = 0.0f;
     private Vector3Float me;
@@ -87,27 +87,32 @@ public class FPCameraController {
    
     
     public void walkForward(float distance) {
-        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
-        float xOffset = distance * (float) Math.sin(Math.toRadians(yaw));
-        float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
+        Vector3f direction = new Vector3f(0,0,0);
+        direction.x = distance * (float) -Math.sin(Math.toRadians(yaw));
+        System.out.println(direction.x);
+        direction.z = distance * (float) Math.cos(Math.toRadians(yaw));
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),direction,noClip);
+        
         if(collision.getType()!=Collision.CollisionType.NONE){
             System.out.println(" Collision Type is :" +collision.getNormal());
         }
-        position.x-= xOffset +(-collision.getNormal().x*xOffset);
-        position.z+= zOffset +(-collision.getNormal().z*zOffset);
+        position.x+= direction.x +(-collision.getNormal().x*direction.x);
+        position.z+= direction.z +(-collision.getNormal().z*direction.z);
        
         updateLight();
     }
     
     public void walkBackwards(float distance) {
-        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
-        float xOffset = distance * (float) Math.sin(Math.toRadians(yaw));
-        float zOffset = distance * (float) Math.cos(Math.toRadians(yaw));
+         Vector3f direction = new Vector3f(0,0,0);
+        direction.x = distance * (float)  Math.sin(Math.toRadians(yaw));
+        direction.z = distance * (float) -Math.cos(Math.toRadians(yaw));
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),direction,noClip);
+       
         if(collision.getType()!=Collision.CollisionType.NONE){
             System.out.println(" Collision Type is :" +collision.getType());
         }
-        position.x+= xOffset +(-collision.getNormal().x*xOffset);
-        position.z-= zOffset +(-collision.getNormal().z*zOffset);
+        position.x+= direction.x +(-collision.getNormal().x*direction.x);
+        position.z+= direction.z +(-collision.getNormal().z*direction.z);
         
         
         updateLight();
@@ -115,12 +120,13 @@ public class FPCameraController {
     
     //strafes the camera left relative to its current rotation (yaw)
     public void strafeLeft(float distance) {
-        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
-        float xOffset = distance * (float) Math.sin(Math.toRadians(yaw-90));
-        float zOffset = distance * (float) Math.cos(Math.toRadians(yaw-90));
-        
-        position.x-= xOffset -(-collision.getNormal().x*xOffset);
-        position.z+= zOffset -(-collision.getNormal().z*zOffset);
+        Vector3f direction = new Vector3f(0,0,0);
+        direction.x = distance * (float) -Math.sin(Math.toRadians(yaw-90));
+        direction.z = distance * (float) Math.cos(Math.toRadians(yaw-90));
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),direction,noClip);
+     
+        position.x+= direction.x +(-collision.getNormal().x*direction.x);
+        position.z+= direction.z +(-collision.getNormal().z*direction.z);
        
         
         updateLight();
@@ -128,12 +134,13 @@ public class FPCameraController {
     
     //strafes the camera right relative to its current rotation (yaw)
     public void strafeRight(float distance) {
-        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
-        float xOffset = distance * (float) Math.sin(Math.toRadians(yaw+90));
-        float zOffset = distance * (float) Math.cos(Math.toRadians(yaw+90));
+        Vector3f direction = new Vector3f(0,0,0);
+        direction.x = distance * (float) -Math.sin(Math.toRadians(yaw+90));
+        direction.z = distance * (float) Math.cos(Math.toRadians(yaw+90));
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),direction,noClip);
         
-        position.x-= xOffset -(-collision.getNormal().x*xOffset);
-        position.z+= zOffset -(-collision.getNormal().z*zOffset);
+        position.x+= direction.x +(-collision.getNormal().x*direction.x);
+        position.z+= direction.z +(-collision.getNormal().z*direction.z);
         
         
         updateLight();
@@ -141,16 +148,29 @@ public class FPCameraController {
     
     //moves the camera up relative to its current rotation (yaw)
     public void moveUp(float distance) {
-        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
+        Vector3f direction = new Vector3f(0,0,0);
+        direction.y = distance;
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),direction,noClip);
         
         position.y -= distance -(collision.getNormal().y*distance);    
         
         updateLight();
     }
     //moves the camera down
+    public void setVerticalVelocity(float velocity){
+        this.velocity.y = velocity;
+    }
+    
+    public void applyGravity(){
+        moveDown(velocity.y);
+        if (velocity.y < 2)
+            velocity.y += .25f;
+    }
 
     public void moveDown(float distance) {
-        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),noClip);
+        Vector3f direction = new Vector3f(0,0,0);
+        direction.y = distance;
+        Collision collision = Collision.checkCollision(new Vector3f(position.x,position.y,position.z),direction,noClip);
         
         position.y += distance -(-collision.getNormal().y*distance);   
        
