@@ -28,7 +28,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 public class CubeWorld {
     double sumLength=0;
-    public static Chunk assHatt; //this needs to be a class variable , because reasons
+    public static Chunk chunk; //this needs to be a class variable , because reasons
     private FPCameraController fp = new FPCameraController(0f,0f,0f, false);
     private DisplayMode displayMode;
     private FloatBuffer lightPosition;
@@ -173,7 +173,7 @@ public class CubeWorld {
         
         //hide the mouse
         Mouse.setGrabbed(true);
-        assHatt = new Chunk(0,0,0);
+        chunk = new Chunk(0,0,0);
         // keep looping till the display window is closed the ESC key is down
         while (!Display.isCloseRequested()
                 && !Keyboard.isKeyDown(Keyboard.KEY_ESCAPE)) {
@@ -271,7 +271,7 @@ public class CubeWorld {
             camera.lookThrough();
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             //you would draw your scene here.
-            assHatt.render();
+            chunk.render();
             //draw the buffer to the screen
             Display.update();
             Display.sync(60);

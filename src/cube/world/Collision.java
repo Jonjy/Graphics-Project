@@ -92,32 +92,32 @@ public class Collision {
         Collision result = new Collision(CollisionType.OTHER);
         
         if(direction.z>0){
-            if((z-1<0)||(CubeWorld.assHatt.Blocks[x][y][z-1].isActive())||(CubeWorld.assHatt.Blocks[x][y-1][z-1].isActive())){
+            if((z-1<0)||(CubeWorld.chunk.Blocks[x][y][z-1].isActive())||(CubeWorld.chunk.Blocks[x][y-1][z-1].isActive())){
                 result.addCollision(CollisionType.BACK);
             }
         }
         if(direction.z<0){
-            if((z+1>99)||(CubeWorld.assHatt.Blocks[x][y-1][z+1].isActive())||(CubeWorld.assHatt.Blocks[x][y][z+1].isActive())){
+            if((z+1>99)||(CubeWorld.chunk.Blocks[x][y-1][z+1].isActive())||(CubeWorld.chunk.Blocks[x][y][z+1].isActive())){
                 result.addCollision(CollisionType.FRONT);
             }
         }
         if(direction.x>0){
-            if(((x-1)<0)||(CubeWorld.assHatt.Blocks[x-1][y-1][z].isActive())||(CubeWorld.assHatt.Blocks[x-1][y][z].isActive())){
+            if(((x-1)<0)||(CubeWorld.chunk.Blocks[x-1][y-1][z].isActive())||(CubeWorld.chunk.Blocks[x-1][y][z].isActive())){
                 result.addCollision(CollisionType.RIGHT); 
             }
         }
         if(direction.x<0){
-            if(((x+1)>99)||(CubeWorld.assHatt.Blocks[x+1][y-1][z].isActive())||(CubeWorld.assHatt.Blocks[x+1][y][z].isActive())){
+            if(((x+1)>99)||(CubeWorld.chunk.Blocks[x+1][y-1][z].isActive())||(CubeWorld.chunk.Blocks[x+1][y][z].isActive())){
                  result.addCollision(CollisionType.LEFT);  
             }
         }
         if(direction.y<0){
-            if(((y+1)>99)||(CubeWorld.assHatt.Blocks[x][y+1][z].isActive())){
+            if(((y+1)>99)||(CubeWorld.chunk.Blocks[x][y+1][z].isActive())){
                 result.addCollision(CollisionType.BOTTOM);
             }
         }
         if(direction.y>0){
-            if(((y-1)<0)||(CubeWorld.assHatt.Blocks[x][y-2][z].isActive())){
+            if(((y-1)<0)||(CubeWorld.chunk.Blocks[x][y-2][z].isActive())){
                 result.addCollision(CollisionType.TOP);
             }
         }
