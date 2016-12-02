@@ -64,8 +64,8 @@ public class CubeWorld {
         Display.setFullscreen(false);
         DisplayMode d[] = Display.getAvailableDisplayModes();
         for (int i = 0; i < d.length; i++) {
-            if (d[i].getWidth() == 1024
-                    && d[i].getHeight() == 768
+            if (d[i].getWidth() == 640
+                    && d[i].getHeight() == 480
                     && d[i].getBitsPerPixel() == 32) {
                 displayMode = d[i];
                 break;

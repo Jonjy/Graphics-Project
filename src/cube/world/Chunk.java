@@ -96,7 +96,7 @@ public class Chunk {
                                         (float) (startY + y *CUBE_LENGTH),
                                         (float) (startZ + z * CUBE_LENGTH));
                             VertexPositionData.put(
-                                createCube((float) (startX + x* CUBE_LENGTH),
+                               createCube((float) (startX + x* CUBE_LENGTH),
                                         (float) (startY + y *CUBE_LENGTH),
                                         (float) (startZ + z * CUBE_LENGTH)));
                             VertexNormalData.put(generateNormals());
